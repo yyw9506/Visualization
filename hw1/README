@@ -1,0 +1,14 @@
+Get some CSV-based data (see course slides for good sources)
+at least 250 data points (the more the better)
+at least 15 dimensions (fuse datasets to achieve this)
+good mix of numerical and categorical variables (minimum 5 levels)
+
+Your D3-based visual interface should be able to (10 pts each):
+1. present a menu to allow users to select a variable and update chart
+2. draw a bar chart if a categorical variable is selected
+3. draw a histogram if a numerical variable is selected (bin it into a
+fixed range (equi-width) of your choice)
+4. on mouse-over display the value of the bar on top of the bar
+5. on mouse-over also make the bar wider and higher to focus on it
+6. mouse (with left mouse button down) move left (right) should
+decrease (increase) bin width/size (for numerical variables only)
