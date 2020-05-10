@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8"> 
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     	<title>Assignment2</title> 
+     	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <!-- 引入 Bootstrap -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- CSS -->
+        <style>
+
+        	body {
+        		background-color: #F5f5f5;
+        		color: #fbf6f6;
+        	}
+
+        	.button {
+			  display: inline-block;
+			  border-radius: 4px;
+			  /*background-color: #f4511e;*/
+			  background-color: #FF8247;
+			  border: none;
+			  color: #FFFFFF;
+			  text-align: center;
+			  font-size: 12px;
+			  padding: 10px;
+			  width: 160px;
+			  transition: all 0.5s;
+			  cursor: pointer;
+			  margin: 5px;
+			}
+
+			.button span {
+			  cursor: pointer;
+			  display: inline-block;
+			  position: relative;
+			  transition: 0.5s;
+			}
+
+			.button span:after {
+			  content: '»';
+			  position: absolute;
+			  opacity: 0;
+			  top: 0;
+			  right: -20px;
+			  transition: 0.5s;
+			}
+
+			.button:hover span {
+			  padding-right: 25px;
+			}
+
+			.button:hover span:after {
+			  opacity: 1;
+			  right: 0;
+			}
+
+			.button1 {
+			  display: inline-block;
+			  border-radius: 4px;
+			  background-color: #E0EEEE;
+			  border: none;
+			  color: #4F4F4F;
+			  text-align: center;
+			  font-size: 12px;
+			  padding: 10px;
+			  width: 160px;
+			  transition: all 0.5s;
+			  cursor: pointer;
+			  margin: 5px;
+			}
+
+			.button2 {
+			  display: inline-block;
+			  border-radius: 4px;
+			  background-color: #BEBEBE;
+			  border: none;
+			  color: #4F4F4F;
+			  text-align: center;
+			  font-size: 12px;
+			  padding: 10px;
+			  width: 160px;
+			  transition: all 0.5s;
+			  cursor: pointer;
+			  margin: 5px;
+			}
+
+			.container {
+                margin: 30px auto;
+                width: 1080px;
+                height: 600px;
+                border: 1px solid DarkCyan;
+            }
+
+            .axis path, .axis line {
+          		fill: none;
+          		stroke: #000;
+          		shape-rendering: crispEdges;
+        	}
+
+            .line {
+                stroke: SteelBlue;
+                stroke-width: 5px;
+                fill: none;
+            }
+
+            .path {
+            	fill: none;
+            }	
+
+            #ft {
+            	background: #363636;
+            	height: 100px;
+            }
+
+       </style>
+	</head>
+
+	<body>
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+        <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+ 
+        <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+        <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        
+       <!-- js functions -->
+       <script type="text/javascript">
+
+       	//url
+       	var url="http://localhost:5000";
+
+       	// width, height
+       	var width = 1080, height = 540;
+       	var padding = { top: 80, right: 80, bottom: 100, left:80 };
+
+       	// transcations
+       	function msg_alert(msg){
+		 		alert(msg);
+		}
+
+		function colorRoll(idx) {
+                var colorlist = [
+                    '#2ec7c9', '#b6a2de', '#5ab1ef', '#ffb980', '#d87a80',
+                    '#8d98b3', '#e5cf0d', '#97b552', '#95706d', '#dc69aa',
+                    '#07a2a4', '#9a7fd1', '#588dd5', '#f5994e', '#c05050',
+                    '#59678c', '#c9ab00', '#7eb00a', '#6f5553', '#c14089'
+                ]
+                return colorlist[idx % colorlist.length];
+        }
+
+		function runElbowOnKmeans(){
+		    $.getJSON(url + '/runElbowOnKmeans', {
+
+		  		  }, function(d) {
+		  		  	// console.log(d)
+		  		  	drawLineChart(d.data, "K value for K-means", "Distortions (Sum of squares)")
+		  		  });
+		  		  return false;
+		}
+
+		function randomSamplingPCA_ScreePlot(){
+			$.getJSON(url + '/randomSamplingPCA_ScreePlot',{
+
+			}, function(d) {
+					// console.log(d);
+					drawLineChart(d.data,"Component","Explained Variance Ratio")
+			});
+			return false;
+		}
+
+		function randomSamplingPCA_ScatterPlot(){
+			$.getJSON(url + '/randomSamplingPCA_ScatterPlot',{
+
+			}, function(d) {
+					// console.log(d)
+					drawScatterPlot(d.data,"PCA_1", "PCA_2", 1)
+			});
+			return false;
+		}
+
+		function randomSamplingMDS_ScreePlot(){
+			$.getJSON(url + '/randomSamplingMDS_ScreePlot',{
+
+			}, function(d){
+					// console.log(d.data);
+					drawLineChart(d.data, "Component", "Stress")
+			});
+			return false;
+		}
+
+		function randomSamplingMDS_ScatterPlot(){
+			$.getJSON(url + '/randomSamplingMDS_ScatterPlot',{
+
+			}, function(d){
+					// console.log(d)
+					drawScatterPlot(d.data,"MDS_1", "MDS_2", 1)
+			})
+		}
+
+		function randomSamplingMDSCorr_ScatterPlot(){
+			$.getJSON(url + '/randomSamplingMDSCorr_ScatterPlot',{
+
+			}, function(d){
+				drawScatterPlot(d.data, "MDS_1", "MDS_2", 1)
+			});
+			return false;
+		}
+
+		function randomSamplingScatterPlotMatrix(){
+			$.getJSON(url + '/randomSamplingScatterPlotMatrix', {
+
+			}, function(d){
+				drawScatterPlotMatrix(d.data)
+			});
+			return false;
+		}
+
+		function stratifiedSamplingPCA_ScreePlot(){
+			$.getJSON(url + '/stratifiedSamplingPCA_ScreePlot',{
+
+			}, function(d){
+					//console.log(d)
+					drawLineChart(d.data,"Component","Explained Variance Ratio")
+			});
+			return false;
+		}
+
+		function stratifiedSamplingPCA_ScatterPlot(){
+			$.getJSON(url + '/stratifiedSamplingPCA_ScatterPlot',{
+
+			}, function(d) {
+					// console.log(d)
+					drawScatterPlot(d.data,"PCA_1", "PCA_2", 4)
+			});
+			return false;	
+		}
+
+		function stratifiedSamplingMDS_ScreePlot(){
+			$.getJSON(url +'/stratifiedSamplingMDS_ScreePlot',{
+
+			}, function(d){
+					drawLineChart(d.data, "Component", "Stress")
+			});
+		}
+
+		function stratifiedSamplingMDS_ScatterPlot(){
+			$.getJSON(url + '/stratifiedSamplingMDS_ScatterPlot',{
+
+			}, function(d){
+				// console.log(d)
+				drawScatterPlot(d.data, "MDS_1", "MDS_2",4)
+			});
+			return false;
+		}
+
+		function stratifiedSamplingMDSCorr_ScatterPlot(){
+			$.getJSON(url +'/stratifiedSamplingMDSCorr_ScatterPlot',{
+
+			}, function(d){
+				drawScatterPlot(d.data, "MDS_1", "MDS_2", 4)
+			});
+			return false;
+		}
+
+		function stratifiedSamplingSatterPlotMatrix(){
+			$.getJSON(url + '/stratifiedSamplingSatterPlotMatrix', {
+
+			}, function(d){
+				drawScatterPlotMatrix(d.data)
+			});
+			return false;
+		}
+
+		function originalPCA_ScreePlot(){
+			$.getJSON(url + '/originalPCA_ScreePlot', {
+
+			}, function(d){
+				drawLineChart(d.data, "Component", "Explained Variance Ratio")
+			});
+			return false;
+		}
+
+		function originalPCA_ScatterPlot(){
+			$.getJSON(url +'/originalPCA_ScatterPlot', {
+
+			}, function(d){
+				drawScatterPlot(d.data, "PCA_1", "PCA_2", "1")
+			});
+			return false;
+		}
+
+		function originalMDS_ScreePlot(){
+			$.getJSON(url +'/originalMDS_ScreePlot', {
+
+			}, function(d){
+				console.log(d.data)
+				drawLineChart(d.data, "Component", "Stress")
+			});
+			return false;
+		}
+
+		function originalMDS_ScatterPlot(){
+			$.getJSON(url + '/originalMDS_ScatterPlot', {
+
+			}, function(d){
+				drawScatterPlot(d.data, "MDS_1", "MDS_2", 1)
+			});
+			return false;
+		}
+
+		function originalMDSCorr_ScatterPlot(){
+			$.getJSON(url +'/originalMDSCorr_ScatterPlot', {
+
+			}, function(d){
+				drawScatterPlot(d.data, "MDS_1", "MDS_2", 1)
+			});
+			return false;
+		}
+
+		function originalScatterPlotMatrix(){
+			$.getJSON(url + '/originalScatterPlotMatrix', {
+
+			}, function(d){
+				drawScatterPlotMatrix(d.data)
+			});
+			return false;
+		}
+
+		// init setting
+		runElbowOnKmeans();
+
+		// charts
+		function drawLineChart(data, xLabel, yLabel){
+			// clean
+			d3.selectAll("g").remove();
+			d3.select("#minor_svg").remove();
+
+			// comp dim
+			var dim = 0;
+			var ratio = 0.93;
+
+			if (yLabel == "Explained Variance Ratio")
+			{
+				var sum = 0;
+				
+				console.log("Calculating intrinsic dimensionality.");// data
+				console.log(data.length);
+				for (index=0; index<data.length; index++)
+				{
+					// current sum
+					sum += data[index].y;
+					console.log("sum",sum);
+					if (sum >= ratio)
+					{
+						dim = index;
+						console.log("dim:",dim);
+						break;
+					}
+				}
+			}
+
+			// data
+			console.log(data);
+			// data = [{ "x": 1,   "y": 5},  { "x": 20,  "y": 20}, { "x": 40,  "y": 10}, { "x": 60,  "y": 40},{ "x": 80,  "y": 5}];
+			// svg
+			var main = d3.select('.container svg').append('g')
+                    // 设置该分组的transform属性
+                    .attr('transform', "translate(" + padding.left +',' + padding.top + ')');
+
+			// x Scale
+			var xScale = d3.scale.linear()
+				.domain(d3.extent(data, function(d){
+					return d.x;
+				}))
+				.range([0, width - padding.left - padding.right]);
+
+			// y Scale
+			var yScale = d3.scale.linear()
+				.domain([0, d3.max(data, function(d){
+					return d.y;
+				})])
+				.range([height - padding.top - padding.bottom, 0]);
+
+			// x Axis
+			var xAxis = d3.svg.axis()
+			    .scale(xScale)
+			    .orient('bottom')
+
+			// y Axis
+			var yAxis = d3.svg.axis()
+			    .scale(yScale)
+			    .orient('left')
+
+			main.append('g')
+		        .attr('class', 'axis')
+		        .attr('transform', 'translate(0,' + (height - padding.top - padding.bottom) + ')')
+		        .call(xAxis)
+		        .append("text")
+		        .attr("transform", "translate("+(width - padding.left - padding.right)/2+", 45)")
+		        .attr("font-size", "15px")
+		        .text(xLabel);
+			
+			main.append('g')
+		        .attr('class', 'axis')
+		        .call(yAxis)
+		        .append("text")
+		        .attr("transform", "translate(40,0)")
+		        .attr("font-size", "15px")
+		        .text(yLabel);
+
+			// 添加折线
+			var line = d3.svg.line()
+		        .x(function(d) {
+		            return xScale(d.x)
+		        })
+		        .y(function(d) {
+		            return yScale(d.y)
+		        })
+		        // 选择线条的类型
+		        .interpolate('linear')
+
+			// 添加path元素，并通过line()计算出值来赋值
+			main.append('path')
+		        .attr('class', 'line')
+		        .attr('d', line(data))
+		        .attr('fill',"#696969")
+		        .on("mouseover", function(d,i){
+		        	d3.select(this)
+		        	.transition()
+                    .delay(50)
+                    .duration(150)
+		        	.attr("opacity",0.5);
+		        })
+		        .on("mouseout", function(d,i){
+		        	d3.select(this)
+		        	.transition()
+                    .delay(50)
+                    .duration(150)
+		        	.attr("opacity",1);
+		        })
+
+			main.selectAll('circle')
+                .data(data)
+                .enter()
+                .append('circle')
+                .attr('cx', function(d) {
+                    return xScale(d.x);
+                })
+                .attr('cy', function(d) {
+                    return yScale(d.y);
+                })
+                .attr('r', function(d,i){
+            		if (i == dim && yLabel == "Explained Variance Ratio"){
+            			return 12;
+            		}else{
+            			return 6;
+            		}
+               	})
+                .attr('fill', function(d, i) {
+                	if (i == dim && yLabel == "Explained Variance Ratio"){
+            			return "#ff0000";
+            		}else{
+            			return colorRoll(i);
+            		}
+                })
+               	.on("mouseover", function(d,i){
+               		// console.log(d.y)
+               		d3.select(this)
+               		.attr("fill","#4F4F4F")
+               		.attr("r",8)
+
+               		// console.log(d.x, d.y)
+               		main.append("text")
+               		.attr("id","text_of_points")
+               		.attr("x", xScale(d.x))
+               		.attr("y", yScale(d.y)-20)
+               		.attr("text-anchor", "middle")
+               		.text(function(){
+               			return d.y.toFixed(2);
+               		})
+               		.style("fill", "#5F9EA0")
+               		.transition()
+                    .delay(50)
+                    .duration(150);
+               	})
+               	.on("mouseout", function(d,i){
+               		// console.log(d.y)
+               		d3.select(this)
+               		.transition()
+                    .delay(50)
+                    .duration(150)
+               		.attr('fill', function(){ return colorRoll(i); })
+               		.attr("r",6)
+               		main.selectAll("#text_of_points").remove();
+               	});
+		}
+
+		function drawScatterPlot(data, xLabel, yLabel, cluster_num){
+			// clean
+			d3.selectAll("g").remove();
+			d3.select("#minor_svg").remove();
+
+			console.log("Cluster number:"+cluster_num)
+			// data
+			console.log(data);
+			var main = d3.select('.container svg').append('g')
+                    // 设置该分组的transform属性
+                    .attr('transform', "translate(" + padding.left +',' + padding.top + ')');
+
+			// x Scale
+			var xScale = d3.scale.linear()
+				.domain(d3.extent(data, function(d){
+					return d.x;
+				}))
+				.range([0, width - padding.left - padding.right]);
+
+			// y Scale
+			var yScale = d3.scale.linear()
+				.domain(d3.extent(data, function(d){
+					return d.y;
+				}))
+				.range([height - padding.top - padding.bottom, 0]);
+
+			// x Axis
+			var xAxis = d3.svg.axis()
+			    .scale(xScale)
+			    .orient('bottom')
+
+			// y Axis
+			var yAxis = d3.svg.axis()
+			    .scale(yScale)
+			    .orient('left')
+
+			// add circles
+			main.selectAll("circle")  
+			   .data(data)
+			   .enter()
+			   .append("circle")
+			   .attr("cx", function(d) {
+			   		// console.log(d.x);
+			        return xScale(d.x);
+			   })
+			   .attr("cy", function(d) {
+			   		// console.log(d.y);
+			        return yScale(d.y);
+			   })
+			   .attr("r", 8)
+			   // .attr("fill", "#5F9EA0")
+			   // .attr("fill", "#d87a80")
+			   .attr("fill", function(d){
+			   		if(cluster_num == 1){
+			   			return "#4F94CD"
+			   		}
+			   		else{
+			   			return colorRoll(d.cluster)
+			   		}
+			   })
+			   .on("mouseover", function(d,i){
+               		// console.log(d.y)
+               		d3.select(this)
+               		// .attr("fill","#4F4F4F")
+               		.attr("fill", "#FF6347")
+               		.attr("r",10)
+
+               		// console.log(d.x, d.y)
+               		main.append("text")
+               		.attr("id","text_of_points")
+               		.attr("x", xScale(d.x))
+               		.attr("y", yScale(d.y)-20)
+               		.attr("text-anchor", "middle")
+               		.text(function(){
+               			return "("+d.x.toFixed(3) + ","+ d.y.toFixed(3) +")";
+               		})
+               		.style("fill", "#5F9EA0")
+               		.transition()
+                    .delay(50)
+                    .duration(150);
+               	})
+               	.on("mouseout", function(d,i){
+               		// console.log(d.y)
+               		d3.select(this)
+               		.transition()
+                    .delay(50)
+                    .duration(150)
+               		.attr("r",8)
+               		.attr("fill", function(d){
+				   		if(cluster_num == 1){
+				   			return "#4F94CD"
+				   		}
+				   		else{
+				   			return colorRoll(d.cluster)
+				   		}
+			   		})
+               		main.selectAll("#text_of_points").remove();
+               	});
+
+			main.append('g')
+		        .attr('class', 'axis')
+		        .attr('transform', 'translate(0,' + (height - padding.top - padding.bottom) + ')')
+		        .call(xAxis)
+		        .append("text")
+		        .attr("transform", "translate("+(width - padding.left - padding.right)/2+", 45)")
+		        .attr("font-size", "15px")
+		        .text(xLabel);
+			
+			main.append('g')
+		        .attr('class', 'axis')
+		        .call(yAxis)
+		        .append("text")
+		        .attr("transform", "translate(40,0)")
+		        .attr("font-size", "15px")
+		        .text(yLabel);
+		}
+
+		function drawScatterPlotMatrix(data){
+			var size=300;
+            var padding=30;
+
+            d3.select("#minor_svg").remove();
+			console.log(data)
+
+			var domainByTrait = {},
+                traits = d3.keys(data[0]).filter(function(d) { 
+                	// console.log(d)
+                	return d !== "clusters"; 
+                }),
+                n = traits.length;
+
+            console.log("dimensions:"+n)
+
+            traits.forEach(function(trait){
+            	domainByTrait[trait] = d3.extent(data, function(d){ return d[trait]; })
+            })
+
+            console.log(traits);
+            console.log(domainByTrait);
+
+            var xScale = d3.scale.linear()
+            	.range([padding / 2, size - padding / 2]);
+
+            var yScale = d3.scale.linear()
+            .range([size - padding / 2, padding / 2]);
+
+             var xAxis = d3.svg.axis()
+	            .scale(xScale)
+	            .orient("bottom")
+	            .ticks(5);
+
+		    var yAxis = d3.svg.axis()
+	            .scale(yScale)
+	            .orient("left")
+	            .ticks(5);
+
+	        xAxis.tickSize(size*n)
+	        yAxis.tickSize(-size*n)
+
+	         var brush = d3.svg.brush()
+	         	.x(xScale)
+	         	.y(yScale)
+	      		// .on("brushstart", mousedown)
+			    // .on("brush", mousemove)
+			    // .on("brushend", mouseup);
+
+			var svg = d3.select('.container').append('svg')
+				.attr("id","minor_svg")
+				.attr("width", size * n + padding + 150)
+				.attr("height", size * n + padding)
+				.append("g")
+				.attr("transform", "translate(" + (padding+40) + "," + padding / 2 + ")");
+
+			svg.selectAll(".x.axis")
+                .data(traits)
+                .enter().append("g")
+                .attr("class", "x axis")
+                .attr("transform", function(d, i) { return "translate(" + (n - i - 1) * size + ",0)"; })
+                .each(function(d) { xScale.domain(domainByTrait[d]); d3.select(this).call(xAxis); });
+
+        	svg.selectAll(".y.axis")
+                .data(traits)
+                .enter().append("g")
+                .attr("class", "y axis")
+                .attr("transform", function(d, i) { return "translate(0," + i * size + ")"; })
+                .each(function(d) { yScale.domain(domainByTrait[d]); d3.select(this).call(yAxis); });
+
+            var cell = svg.selectAll(".cell")
+				.data(cross(traits, traits))
+				.enter().append("g")
+				.attr("class", "cell")
+				.attr("fill","#ffffff")
+				.attr("transform", function(d) {return "translate(" + (n - d.i - 1) * size + "," + d.j * size + ")"; })
+				.each(plot);
+
+            cell.filter(function(d) { return d.i === d.j; }).append("text")
+				.attr("x", padding)
+				.attr("y", padding)
+				.attr("dy", ".71em")
+				.attr("fill","#000000")
+				.text(function(d) { return d.x; });
+
+            function plot(p) {
+                 var cell = d3.select(this);
+
+                 xScale.domain(domainByTrait[p.x]);
+                 yScale.domain(domainByTrait[p.y]);
+
+                 cell.append("rect")
+                     .attr("class", "frame")
+                     .attr("x", padding / 2)
+                     .attr("y", padding / 2)
+                     .attr("width", size - padding)
+                     .attr("height", size - padding);
+
+                 cell.selectAll("circle")
+                     .data(data)
+                   	 .enter().append("circle")
+                     .attr("cx", function(d) { return xScale(d[p.x]); })
+                     .attr("cy", function(d) { return yScale(d[p.y]); })
+                     .attr("r", 4)
+                     .style("fill", function(d) { 
+                     	if (d.clusters != null){
+                     		return colorRoll(d.clusters); 
+                     	}else{
+                     		return colorRoll(2); 
+                     	}
+                     });
+               }
+		}
+
+		// Function to find Cross between each columns
+        function cross(a, b) {
+              var c = [], n = a.length, m = b.length, i, j;
+              for (i = -1; ++i < n;) for (j = -1; ++j < m;) c.push({x: a[i], i: i, y: b[j], j: j});
+              return c;
+        }
+
+		</script>
+
+		<!-- Title -->
+        <div id ="title_p" style="background: DarkCyan; height: 60px; text-align: center;">
+            <p style ="font-size: 28px; color: #F5F5F5; text-align: center;">CSE-564 Visualization Assignment 2</p>
+        </div>
+
+        <!-- buttons group0 -->
+		<div id="buttons_group0" style="text-align: center;">
+			<button class="button2" style="vertical-align:middle, " disabled="disabled"><span> Original >> </span></button>
+			<button class="button" style="vertical-align:middle" onclick="originalPCA_ScreePlot()"><span>Scree Plot(PCA)</span></button>
+			<button class="button" style="vertical-align:middle" onclick="originalPCA_ScatterPlot()"><span>Scatter Plot(PCA)</span></button>
+			<button class="button" style="vertical-align:middle" onclick="originalMDS_ScreePlot()"><span>Scree Plot(MDS)</span></button>
+			<button class="button" style="vertical-align:middle" onclick="originalMDS_ScatterPlot()"><span>MDS (Euc)</span></button>
+			<button class="button" style="vertical-align:middle" onclick="originalMDSCorr_ScatterPlot()"><span>MDS (Corr Dis)</span></button>
+			<button class="button" style="vertical-align:middle" onclick="originalScatterPlotMatrix()"><span>Scatter Plot Matrix</span></button>
+		</div>
+
+		<!-- buttons group1 -->
+		<div id="buttons_group1" style="text-align: center;">
+				<button class="button1" style="vertical-align:middle" disabled="disabled"><span> Random Sampling >></span></button>
+				<button class="button" style="vertical-align:middle" onclick="randomSamplingPCA_ScreePlot()"><span>Scree Plot(PCA)</span></button>
+				<button class="button" style="vertical-align:middle" onclick="randomSamplingPCA_ScatterPlot()"><span>Scatter Plot(PCA)</span></button>
+				<button class="button" style="vertical-align:middle" onclick="randomSamplingMDS_ScreePlot()"><span>Scree Plot(MDS)</span></button>
+				<button class="button" style="vertical-align:middle" onclick="randomSamplingMDS_ScatterPlot()"><span>MDS (Euc)</span></button>
+				<button class="button" style="vertical-align:middle" onclick="randomSamplingMDSCorr_ScatterPlot()"><span>MDS (Corr Dis)</span></button>
+				<button class="button" style="vertical-align:middle" onclick="randomSamplingScatterPlotMatrix()"><span>Scatter Plot Matrix</span></button>
+		</div>
+
+		<!-- buttons group2 -->
+		<div id="buttons_group2" style="text-align: center;">
+				<button class="button1" style="vertical-align:middle" disabled="disabled"><span> Stratified Sampling >></span></button>
+				<button class="button" style="vertical-align:middle" onclick="stratifiedSamplingPCA_ScreePlot()"><span>Scree Plot(PCA)</span></button>
+				<button class="button" style="vertical-align:middle" onclick="stratifiedSamplingPCA_ScatterPlot()"><span>Scatter Plot(PCA)</span></button>
+				<button class="button" style="vertical-align:middle" onclick="stratifiedSamplingMDS_ScreePlot()"><span>Scree Plot(MDS)</span></button>
+				<button class="button" style="vertical-align:middle" onclick="stratifiedSamplingMDS_ScatterPlot()"><span>MDS (Euc)</span></button>
+				<button class="button" style="vertical-align:middle" onclick="stratifiedSamplingMDSCorr_ScatterPlot()"><span>MDS (Corr Dis)</span></button>
+				<button class="button" style="vertical-align:middle" onclick="stratifiedSamplingSatterPlotMatrix()"><span>Scatter Plot Matrix</span></button>
+		</div>
+
+		<!-- buttons group3 -->
+		<div id="buttons_group3" style="text-align: center;">
+				<button class="button1" style="vertical-align:middle" disabled="disabled">
+					<span> Other Plots >></span>
+				</button>
+				<button class="button" style="vertical-align:middle" onclick="runElbowOnKmeans()"><span>Kmeans (Elbow) </span></button>
+				
+		</div>
+
+		<!-- container for svg -->
+		<div class="container" id="container">
+			<p style="font-size: 20px; text-align: center; color:#4F4F4F;"> Breast Cancer Data</p>
+		    <svg width="100%" height="100%" id="main_svg"></svg>
+		</div>
+		 
+		<!-- <footer id= "ft" >
+			<p style ="font-size: 14px; color: #F5F5F5; text-align: center;">Yuyao Wang</p>
+			<p style ="font-size: 14px; color: #F5F5F5; text-align: center;">Stony Brook University</p>
+		</footer>  -->
+		
+	</body>
+</html>
