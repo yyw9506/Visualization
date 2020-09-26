@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>CSE564 Project</title>
+
+        <!-- D3.v3 -->
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+        <!-- Bootstrap -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+        <!-- CSS -->
+        <style>
+
+            .button {
+			  display: inline-block;
+			  border-radius: 4px;
+			  /*background-color: #f4511e;*/
+			  background-color: #1C1C1C;
+			  border: none;
+			  color: #FFFFFF;
+			  text-align: center;
+			  font-size: 12px;
+			  padding: 10px;
+			  width: 120px;
+			  transition: all 0.5s;
+			  cursor: pointer;
+			  margin: 5px;
+			}
+
+			.button span {
+			  cursor: pointer;
+			  display: inline-block;
+			  position: relative;
+			  transition: 0.5s;
+			}
+
+			.button span:after {
+			  content: '»';
+			  position: absolute;
+			  opacity: 0;
+			  top: 0;
+			  right: -20px;
+			  transition: 0.5s;
+			}
+
+			.button:hover span {
+			  padding-right: 25px;
+			}
+
+            body {
+                background-color: #F5f5f5;
+                color: #fbf6f6;
+            }
+
+            #heading{
+                width: 100%;
+                height: 36px;
+                background: #222831;
+            }
+
+            #navigation{
+                width: 100%;
+                height: 40px;
+                background: #222831;
+                /*background: #7F8C8D;*/
+            }
+
+            #global {
+                display: -webkit-box;
+                display: -moz-box;
+                margin: auto;
+                border: 10px solid #7F8C8D;
+                /*border: 10px solid #222831;*/
+                width: 100%;
+                height: 840px;
+
+                /*Horizontal*/
+                -webkit-box-orient: horizontal;
+                -moz-box-orient: horizontal;
+                box-orient: horizontal;
+            }
+
+            #region1 {
+                width: 33.333%;
+                background: #30475E;
+                height: 820px;
+            }
+
+            #region2 {
+                width: 33.333%;
+                background: #F2A365;
+                opacity: 100%;
+                /*background: #E3A869;*/
+                height: 820px;
+            }
+
+            #region3 {
+                width: 33.333%;
+                background: #ECECEC;
+                height: 820px;
+            }
+
+            #sub-region6 {
+                width: 100%;
+                height:30%;
+                text-align: center;
+                background: silver
+            }
+
+            #sub-region6-blocks {
+                display: -webkit-box;
+                display: -moz-box;
+                -webkit-box-orient: horizontal;
+                -moz-box-orient: horizontal;
+                box-orient: horizontal;
+            }
+
+            #footing {
+            	background: #ffffff;
+                width: 100%;
+            	height: 200px;
+            }
+
+            #img_logo {
+                width: 50px;
+                height: 100px;
+            }
+
+            #img_teams {
+                width: 1000px;
+                height: 200px;
+            }
+
+            #reset{
+                background-color: #222831;
+                border: none;
+                color: #FFFFFF;
+                text-align: center;
+                font-size: 12px;
+                padding: 5px;
+                width: 140px;
+                transition: all 0.5s;
+                cursor: pointer;
+                margin: 5px;
+                border: 2px white solid;
+            }
+
+            .axis path, .axis line {
+          		fill: none;
+          		stroke: #f0f0f0;
+          		shape-rendering: crispEdges;
+        	}
+
+            .axis1 path, .axis1 line {
+          		fill: none;
+          		stroke: #000000;
+          		shape-rendering: crispEdges;
+        	}
+
+            option{
+                color: black;
+                background: #A6E1EC;
+                line-height: 20px;
+            }
+
+            select{
+                font-family: "微软雅黑";
+                background: rgba(0,0,0,0);
+                width: 150px;
+                height: 30px;
+                font-size: 12px;
+                color: white;
+                text-align: center;
+                border: 2px white solid;
+                border-radius: 5px;
+            }
+
+            select:focus{
+                border: 2px #ddd solid;
+                box-shadow: 0 0 15px 1px #DDDDDD;
+            }
+
+            option:hover{
+                background: #EBCCD1;
+            }
+
+            input{
+                outline-style: none ;
+                border: 1px solid #ccc;
+                border-radius: 3px;
+                padding: 2px 2px;
+                width: 120px;
+                font-size: 12px;
+                background: #cccccc;
+                padding: 5px;
+                margin: 0px;
+                font-family: "Microsoft soft";
+                border: 1px black solid;
+            }
+
+            input:focus{
+                border-color: #66afe9;
+                outline: 0;
+                -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+                box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6)
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <!-- jQuery文件, 务必在bootstrap.min.js 之前引入 -->
+        <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+
+        <!-- Bootstrap 核心 JavaScript -->
+        <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <!-- heading -->
+        <div id="heading" class="heading">
+<!--            <p style ="font-size: 28px; color: #F5F5F5; text-align: center; width: 100%; height: 30px; display: block; line-height: 45px;">CSE564 Final Project</p>-->
+            <p style ="font-size: 28px; color: #F5F5F5; text-align: center; width: 100%; height: 30px; display: block; line-height: 45px;">Analysis of NBA 2016 - 2017</p>
+        </div>
+
+        <div id="navigation" class="navigation">
+            <span style="padding-left: 20px; padding-top: 0px; font-size: 12px;color: white;">
+                <button class="button" id="reset" onclick=""><span>Reset</span></button>
+            </span>
+
+            <span style="padding-left: 20px; padding-top: 0px; font-size: 12px;color: white;">Filter:</span>
+
+            <select class="position-select" id="position-select">
+                <option value="All">Position</option>
+                <option value="C">C</option>
+                <option value="PF">PF</option>
+                <option value="SG">SG</option>
+                <option value="SF">SF</option>
+                <option value="PG">PG</option>
+            </select>
+
+            <select class="team-select" id="team-select">
+                <option value="All">Team</option>
+                <option value="ATL">ATL</option>
+                <option value="BKN">BKN</option>
+                <option value="BOS">BOS</option>
+                <option value="CHA">CHA</option>
+                <option value="CHI">CHI</option>
+                <option value="CLE">CLE</option>
+                <option value="DAL">DAL</option>
+                <option value="DEN">DEN</option>
+                <option value="DET">DET</option>
+                <option value="GS">GS</option>
+                <option value="HOU">HOU</option>
+                <option value="IND">IND</option>
+                <option value="LAC">LAC</option>
+                <option value="LAL">LAL</option>
+                <option value="MEM">MEM</option>
+                <option value="MIA">MIA</option>
+                <option value="MIL">MIL</option>
+                <option value="MIN">MIN</option>
+                <option value="NO">NO</option>
+                <option value="NY">NY</option>
+                <option value="OKC">OKC</option>
+                <option value="ORL">ORL</option>
+                <option value="PHI">PHI</option>
+                <option value="PHX">PHX</option>
+                <option value="POR">POR</option>
+                <option value="SA">SA</option>
+                <option value="SAC">SAC</option>
+                <option value="TOR">TOR</option>
+                <option value="UTAH">UTAH</option>
+                <option value="WSH">WSH</option>
+            </select>
+        </div>
+
+        <div id="global" class="global">
+            <!-- region1 -->
+            <div id="region1">
+                <!-- sub-region1 -->
+                <div id="sub-region1" style="width: 100%; height:45%; text-align: center">
+                    <svg id="svg1", class="svg1" style="width:530px; height:400px"></svg>
+                </div>
+                <!-- sub-region2 -->
+                <div id="sub-region2" style="width: 100%; height:45%; text-align: center; margin-top: 30px">
+                    <svg id="svg2", class="svg2" style="width:530px; height:400px"></svg>
+                </div>
+            </div>
+
+            <!-- region2 -->
+            <div id="region2">
+                <!-- sub-region3 -->
+                <div id="sub-region3" style="width: 100%; height:45%; text-align: center">
+                    <svg id="svg3", class="svg3" style="width:550px; height:400px"></svg>
+                </div>
+                <!-- sub-region4 -->
+                <div id="sub-region4" style="width: 100%; height:45%; text-align: center; margin-top: 30px">
+                    <svg id="svg4", class="svg4" style="width:550px; height:400px"></svg>
+                </div>
+            </div>
+
+            <!-- region3 -->
+            <div id="region3">
+                <!-- sub-region5 -->
+                <div id="sub-region5" style="width: 100%; height:70%; text-align: center">
+                    <svg id="svg5", class="svg5" style="width:520px; height:570px"></svg>
+                </div>
+                <!-- sbu-region6 -->
+                <div id="sub-region6">
+                    <p style="padding-top: 10px; font-size: 18px;color: black"> Salary Prediction </p>
+                    <div id="sub-region6-blocks">
+                        <div id="sub-region6-blocks-left" style="width: 50%; height: 135px">
+                            <span style="display:inline-block;width:100px; color: #1C1C1C;"> AGE :</span><input id="input1" style="color: #1C1C1C"/>
+                            <span style="display:inline-block;width:100px; color: #1C1C1C; padding-top: 15px"> POINTS :</span><input id="input2" style="color: #1C1C1C"/>
+                            <span style="display:inline-block;width:100px; color: #1C1C1C; padding-top: 15px"> TRB :</span><input id="input3" style="color: #1C1C1C"/>
+
+                        </div>
+                        <div id="sub-region6-blocks-right" style="width: 50%; height: 135px">
+                            <span style="display:inline-block;width:100px; color: #1C1C1C;"> AST :</span><input id="input4" style="color: #1C1C1C"/>
+                            <span style="display:inline-block;width:100px; color: #1C1C1C; padding-top: 15px"> ORPM :</span><input id="input5" style="color: #1C1C1C"/>
+                            <span style="display:inline-block;width:100px; color: #1C1C1C; padding-top: 15px"> DRPM :</span><input id="input6" style="color: #1C1C1C"/>
+                        </div>
+                    </div>
+                    <button class="button" id="button1" style="vertical-align:middle" onclick=""><span>Predict</span></button>
+                    <span style="display:inline-block;width:100px; color: #1C1C1C; padding-top: 15px"> Salary :</span><input id="input7" disabled style="color: #1C1C1C"/>
+                </div>
+            </div>
+        </div>
+
+        <footer id= "footing" >
+            <div align="center">
+                <img id="img_logo" src="../static/images/logo.png">
+                <img id="img_teams" src="../static/images/teams.png" alt="">
+            </div>
+		</footer>
+
+        <!-- js functions -->
+        <script type="text/javascript">
+
+            // test data
+            test_data = [
+                { "x": 1, "y": 5, "cluster": 1},
+                { "x": 20, "y": 20, "cluster": 1},
+                { "x": 30, "y": 10, "cluster": 2},
+                { "x": 40, "y": 40, "cluster": 2},
+                { "x": 50,  "y": 5, "cluster": 3},
+                { "x": 60,  "y": 15, "cluster": 4},
+                { "x": 70,  "y": 25, "cluster": 5}
+            ];
+
+            //url
+       	    var url="http://localhost:5000";
+
+       	    // color roll
+            function color_roll(idx) {
+            var colorlist = [
+                '#292421', '#4169E1', '#FF4500', '#00C957', '#808A87',
+                '#07a2a4', '#d87a80', '#5ab1ef', '#59678c', '#6f5553',
+                '#d87a80', '#e5cf0d', '#97b552', '#95706d', '#dc69aa',
+                ]
+                return colorlist[idx % colorlist.length];
+            }
+
+            // padding
+            var padding = { top: 30, right: 30, bottom: 30, left: 30 };
+
+            var dictionary;
+            // test
+            function test(data) {
+                console.log("testing...");
+                // scatter plots (svg1, svg3)
+                //scatterPlot ("svg1", data, "x", "y");
+                //scatterPlot ("svg3", data, "x", "y");
+
+                // line chart (svg2)
+                //lineChart("svg2", data, "x", "y");
+
+                // bar charts (svg4, svg5)
+                var test_data_col = [
+                    { "x": 'a', "y": 5, "cluster": 1},
+                    { "x": 'b', "y": 20, "cluster": 1},
+                    { "x": 'c', "y": 10, "cluster": 2},
+                    { "x": 'd', "y": 40, "cluster": 2},
+                    { "x": 'e',  "y": 5, "cluster": 3},
+                    { "x": 'f',  "y": 15, "cluster": 4},
+                    { "x": 'g',  "y": 25, "cluster": 5}
+                ];
+                //horizontalBarChart("svg4", test_data_col, 'x', 'y');
+
+                //verticalBarChart("svg5", test_data_col, 'x', 'y');
+            }
+
+            // test (test_data);
+
+            LoadSVG1();
+            LoadSVG3();
+            ScatterplotforTopTwoPCALoading();
+            BarChartAgeAndCount();
+            BarChartSalaryAndCount();
+            ReturnAllData();
+            LoadSVG6();
+
+            function LoadSVG1(){
+				$.getJSON(url+'/LoadSVG1',{
+					},function(d){
+						// console.log(d);
+						scatterPlot ("svg1", d.svg1, "ORPM", "DRPM");
+					});
+					return false;
+			}
+
+			function LoadSVG3(){
+				$.getJSON(url+'/LoadSVG3',{
+					},function(d){
+						// console.log(d);
+						scatterPlot ("svg3", d.svg3, "RPM", "SALARY_MILLIONS");
+					});
+					return false;
+			}
+
+			function LoadSVG6(){
+				$.getJSON(url+'/LoadSVG6',{
+					},function(d){
+						console.log(d)
+
+						$('#input1').val(d.svg6[0].AGE.toFixed(2));
+						$('#input2').val(d.svg6[0].POINTS.toFixed(2));
+						$('#input3').val(d.svg6[0].TRB.toFixed(2));
+						$('#input4').val(d.svg6[0].AST.toFixed(2));
+						$('#input5').val(d.svg6[0].ORPM.toFixed(2));
+						$('#input6').val(d.svg6[0].DRPM.toFixed(2));
+						$('#input7').val(d.svg6[0].SALARY_MILLIONS.toFixed(2));
+
+
+					});
+					return false;
+			}
+
+
+			function ScatterplotforTopTwoPCALoading(){
+				$.getJSON(url+'/ScatterplotforTopTwoPCALoading',{
+					},function(d){
+						// console.log(d);
+						scatterPlot ("svg2", d.svg2, d.xlabel, d.ylabel);
+					});
+					return false;
+			}
+
+			function BarChartAgeAndCount(){
+				$.getJSON(url+'/BarChartAgeAndCount',{
+					},function(d){
+						// console.log(d);
+						horizontalBarChart ("svg4", d.svg4, "AGE", "Number of people");
+					});
+					return false;
+			}
+
+			function BarChartSalaryAndCount(){
+				$.getJSON(url+'/BarChartSalaryAndCount',{
+					},function(d){
+						// console.log(d);
+						verticalBarChart ("svg5", d.svg5, "Salary: Million $", "Number of people");
+					});
+					return false;
+			}
+
+			$('#position-select').change(function(){
+				ReturnRequestData();
+			});
+
+			$('#team-select').change(function(){
+				ReturnRequestData();
+			});
+
+			$('#button1').click(function(){
+                PredictData();
+            });
+
+			$('#reset').click(function(){
+				$('#position-select').val("All");
+				$('#team-select').val("All");
+				SalaryRange = -1;
+				AgeRange = -1;
+                resetData();
+            });
+
+            function PredictData(){
+                data_tmp = {'age':$('#input1').val(), 'points':$('#input2').val(),'trb':$('#input3').val(),'ast':$('#input4').val(),'orpm':$('#input5').val(),'drpm':$('#input6').val()};
+                $.ajax({
+                    url: url+"/PredictData",
+                    type: 'POST',
+                    data: data_tmp,
+                    dataType: "json",
+                    headers: {},
+                    success: function (resp) {
+                        // window.location.href = "/admin/page";
+                    var value = resp.PredictResult;
+                    value=value.replace(/[\"]/g,"")
+                    console.log(value);
+                    $('#input7').val(value);
+
+                        if (resp.error) {
+                            console.log(resp.errmsg);
+                        }
+                    }
+                });
+            }
+
+            var AgeRange= -1;
+            var SalaryRange = -1;
+            var AgeFlag = true;
+            var SalaryFlag = true;
+            function ReturnRequestData(){
+                data_tmp = {'team':$('#team-select').val(), 'position':$('#position-select').val(),'AgeRange': AgeRange, 'SalaryRange': SalaryRange};
+                $.ajax({
+                    url: url+"/ReturnRequestData",
+                    type: 'POST',
+                    data: data_tmp,
+                    dataType: "json",
+                    headers: {},
+                    success: function (resp) {
+                        // window.location.href = "/admin/page";
+                        cleanAll();
+                        LoadSVG1();
+            			LoadSVG3();
+                        ScatterplotforTopTwoPCALoading();
+                        BarChartAgeAndCount();
+                        BarChartSalaryAndCount();
+                        dictionary = resp.info;
+                        // console.log(dictionary);
+                        if (resp.error) {
+                            console.log(resp.errmsg);
+                        }
+                    }
+                });
+            }
+
+            function cleanAll(){
+            	d3.select("#svg1").selectAll("g").remove();
+            	d3.select("#svg2").selectAll("g").remove();
+            	d3.select("#svg3").selectAll("g").remove();
+            	d3.select("#svg4").selectAll("g").remove();
+            	d3.select("#svg5").selectAll("g").remove();
+            }
+
+            function ReturnAllData(){
+                $.getJSON(url+'/ReturnAllData',{
+                 },function(d){
+                    dictionary = d.info
+                    // console.log(dictionary);
+                 });
+                 return false;
+               }
+
+            function resetData(){
+                	$.ajax({
+                    url: url+"/resetData",
+                    type: 'POST',
+                    data: "",
+                    dataType: "json",
+                    headers: {},
+                    success: function (resp) {
+                    	cleanAll();
+                        LoadSVG1();
+                        LoadSVG3();
+	                    ScatterplotforTopTwoPCALoading();
+	                    BarChartAgeAndCount();
+	                    BarChartSalaryAndCount();
+	                    LoadSVG6();
+                    	}
+               		});
+                }
+
+            function scatterPlot(id, data, xLabel, yLabel) {
+                // show data
+                // console.log(data);
+
+                // clean
+                // d3.selectAll("g").remove();
+                var main = d3.select("."+id).append("g")
+                    .attr('transform', "translate(" + padding.left +',' + padding.top + ')');
+
+                // x Scale
+                var xScale = d3.scale.linear()
+                    .domain(d3.extent(data, function(d){
+                        return d.x;
+                    }))
+                    .range([0, 500 - padding.left - padding.right]);
+
+                // y Scale
+                var yScale = d3.scale.linear()
+                    .domain(d3.extent(data, function(d){
+                        return d.y;
+                    }))
+                    .range([400 - padding.top - padding.bottom, 0]);
+
+                // x Axis
+                var xAxis = d3.svg.axis()
+                    .scale(xScale)
+                    .orient('bottom')
+
+                // y Axis
+                var yAxis = d3.svg.axis()
+                    .scale(yScale)
+                    .orient('left')
+
+                // add circles
+			    var circles = main.selectAll("circle")
+                    .data(data)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", function(d) {
+                        // console.log(d.x);
+                        return xScale(d.x);
+                    })
+                    .attr("cy", function(d) {
+                        // console.log(d.y);
+                        return yScale(d.y);
+                    })
+                    .attr("r", 4)
+                    // .attr("fill", "#5F9EA0")
+                    // .attr("fill", "#d87a80")
+                    .attr("fill", function(d){
+                       return color_roll(d.cluster-1);
+                    })
+                    .on("mouseover", function(d,i) {
+                        // console.log(dictionary);
+                        d3.select(this)
+                            .attr("fill", "yellow")
+                            .attr("r", 8)
+                        main.append("text")
+                            .attr("id","text_of_points")
+                            .attr("x", xScale(d.x))
+                            .attr("y", yScale(d.y)-20)
+                            .attr("text-anchor", "middle")
+                            .attr("font-size","10px")
+               		        .text(function(){
+               		            // console.log(dictionary[d.ID-1].PLAYER);
+                                var info ='';
+                                dictionary.forEach(function (record) {
+                                    if(record.ID == d.ID) {
+                                        console.log(record[xLabel],record[yLabel]);
+                                        info = record.PLAYER + " (" +record[xLabel] + " , " +record[yLabel] + ")";
+                                        stop();
+                                    }
+                                })
+                                return info;
+               		        })
+                        .style("fill", "white")
+                        .transition()
+                        .delay(50)
+                        .duration(150);
+                    })
+                    .on("mouseout", function(d,i){
+                        d3.select(this)
+                        .attr("fill", function (d) {
+                            return color_roll(d.cluster-1);
+                        })
+                        .attr("r", 4);
+
+                        main.selectAll("#text_of_points").remove();
+                    })
+
+                main.append('g')
+                    .attr('class', 'axis')
+                    .attr('transform', 'translate(0,' + (400 - padding.top - padding.bottom) + ')')
+                    .call(xAxis)
+                    .append("text")
+                    .attr("transform", "translate("+(500 - padding.left - padding.right)/2+", 30)")
+                    .attr("font-size", "12px")
+                    .attr('fill', '#ffffff')
+                    .text(xLabel);
+
+                main.append('g')
+                    .attr('class', 'axis')
+                    .call(yAxis)
+                    .append("text")
+                    .attr("transform", "translate(-10,-10)")
+                    .attr("font-size", "12px")
+                    .attr('fill', '#ffffff')
+                    .text(yLabel);
+
+                function search(d, x0, y0, x1, y1) {
+                    var cx = xScale(d.x);
+                    var cy = yScale(d.y);
+                    return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
+                }
+
+                function burshed(extent){
+                    if (extent != null){
+                        // console.log(extent)
+                        circles.attr("class", "non-brushed")
+                        var count = 0;
+                        circles.each(function(d){
+                            // console.log(d);
+                            d.selected = false;
+                            d3.select(this).attr("r",4).attr("opacity",0.6);
+                            if(search(d, extent[0][0], extent[0][1], extent[1][0], extent[1][1]))
+                            {
+                                // console.log(d);
+                                d.selected =true;
+                                d3.select(this).attr("r",6).attr("opacity",1.0);
+                                count += 1;
+                            }
+                        });
+                        // console.log(count);
+                        if (count == 0){
+                            circles.attr("opacity",1.0);
+                        }
+                    }
+                }
+
+
+
+                function burshedend(){
+                    var id_list =[];
+                    circles.each(function(d){
+                        if(d.selected)
+                        {
+                            id_list.push(d.ID);
+                        }
+                    })
+                    console.log(id, JSON.stringify(id_list));
+                    data_tmp = {'SVGID':id, 'IDLIST':JSON.stringify(id_list)};
+                    $.ajax({
+                    url: url+"/BurshRefreshData",
+                    type: 'POST',
+                    data: data_tmp,
+                    dataType: "json",
+                    headers: {},
+                    success: function (resp) {
+                        // window.location.href = "/admin/page";
+                        if(id == "svg1"){
+			            	d3.select("#svg2").selectAll("g").remove();
+			            	d3.select("#svg3").selectAll("g").remove();
+			            	d3.select("#svg4").selectAll("g").remove();
+			            	d3.select("#svg5").selectAll("g").remove();
+                        	LoadSVG3();
+	                        ScatterplotforTopTwoPCALoading();
+	                        BarChartAgeAndCount();
+	                        BarChartSalaryAndCount();
+	                        LoadSVG6();
+                        }
+
+                        if(id == "svg2"){
+                        	d3.select("#svg1").selectAll("g").remove();
+			            	d3.select("#svg3").selectAll("g").remove();
+			            	d3.select("#svg4").selectAll("g").remove();
+			            	d3.select("#svg5").selectAll("g").remove();
+                        	LoadSVG1();
+                        	LoadSVG3();
+	                        BarChartAgeAndCount();
+	                        BarChartSalaryAndCount();
+	                        LoadSVG6();
+                        }
+
+                         if(id == "svg3"){
+                         	d3.select("#svg1").selectAll("g").remove();
+			            	d3.select("#svg2").selectAll("g").remove();
+			            	d3.select("#svg4").selectAll("g").remove();
+			            	d3.select("#svg5").selectAll("g").remove();
+                        	LoadSVG1();
+                        	ScatterplotforTopTwoPCALoading();
+	                        BarChartAgeAndCount();
+	                        BarChartSalaryAndCount();
+	                        LoadSVG6();
+                        }
+
+                        dictionary = resp.info;
+                        console.log(dictionary);
+                        if (resp.error) {
+                            console.log(resp.errmsg);
+                        }
+                    }
+               		});
+                }
+
+
+                var brush = d3.svg.brush()
+                    .x(d3.scale.identity().domain([0-1, 530+1]))
+                    .y(d3.scale.identity().domain([0-1, 400+1]))
+
+                brush.on("brush", function brushing(){
+                    current_brush = d3.select(this);
+                    current_brush.attr("opacity",0.2)
+                    var extent = brush.extent();
+                    burshed(extent);
+                })
+
+                brush.on("brushend", function brushend(){
+                    burshedend();
+                })
+
+                main.append("g")
+                    .call(brush)
+
+                var positions = ['C', 'PF', 'PG', 'SF', 'SG'];
+
+                main.selectAll("rect3")
+                    .data(positions)
+                    .enter()
+                    .append("rect")
+                    .attr("class", "rect3")
+                    .attr("x", 460)
+                    .attr("y", function(d,i){
+                        return i*14 + 10;
+                    })
+                    .attr("width",12)
+                    .attr("height",12)
+                    .attr("fill", function (d,i) {
+                        return color_roll(i)
+                    })
+
+                main.selectAll("rect3_label")
+                    .data(positions)
+                    .enter()
+                    .append("text")
+                    .attr("class", "rect3_label")
+                    .attr("x", 440)
+                    .attr("y", function(d,i){
+                        return i*14 +18;
+                    })
+                    .attr("font-size",'12px')
+                    .attr('fill', '#ffffff')
+                    .text(function (d) {
+                        return d;
+                    })
+                    .style("alignment-baseline", "middle")
+
+            }
+
+            function lineChart(id, data, xLabel, yLabel) {
+                // show data
+                // console.log(data);
+
+                var main = d3.select("."+id).append("g")
+                    .attr('transform', "translate(" + padding.left +',' + padding.top + ')');
+
+                // x Scale
+                var xScale = d3.scale.linear()
+                    .domain(d3.extent(data, function(d){
+                        return d.x;
+                    }))
+                    .range([0, 500 - padding.left - padding.right]);
+
+                // y Scale
+                var yScale = d3.scale.linear()
+                    .domain([0, d3.max(data, function(d){
+                        return d.y;
+                    })])
+                    .range([400 - padding.top - padding.bottom, 0]);
+
+                // x Axis
+                var xAxis = d3.svg.axis()
+                    .scale(xScale)
+                    .orient('bottom')
+
+                // y Axis
+                var yAxis = d3.svg.axis()
+                    .scale(yScale)
+                    .orient('left')
+
+                main.append('g')
+                    .attr('class', 'axis')
+                    .attr('transform', 'translate(0,' + (400 - padding.top - padding.bottom) + ')')
+                    .call(xAxis)
+                    .append("text")
+                    .attr("transform", "translate("+(500 - padding.left - padding.right)/2+", -5)")
+                    .attr("font-size", "15px")
+                    .text(xLabel);
+
+                main.append('g')
+                    .attr('class', 'axis')
+                    .call(yAxis)
+                    .append("text")
+                    .attr("transform", "translate(15,0)")
+                    .attr("font-size", "15px")
+                    .text(yLabel);
+
+                // 添加折线
+                var line = d3.svg.line()
+                    .x(function(d) {
+                        return xScale(d.x)
+                    })
+                    .y(function(d) {
+                        return yScale(d.y)
+                    })
+                    // 选择线条的类型
+                    .interpolate('linear')
+
+                main.append('path')
+                    .attr('class', 'line')
+                    .attr('d', line(data))
+                    .attr('stroke',"#f0f0f0")
+                    .attr('fill','none')
+
+                main.selectAll('circle')
+                    .data(data)
+                    .enter()
+                    .append('circle')
+                    .attr('cx', function(d) {
+                        return xScale(d.x);
+                    })
+                    .attr('cy', function(d) {
+                        return yScale(d.y);
+                    })
+                    .attr('r', function(d,i){
+                        return 6;
+                    })
+                    .attr('fill', function(d, i) {
+                        return color_roll(d.cluster-1);
+                    })
+            }
+
+            function horizontalBarChart(id, data, xLabel, yLabel) {
+
+                var main = d3.select("."+id).append("g")
+                    .attr('transform', "translate(" + 40 +',' + padding.top + ')');
+
+                var xScale = d3.scale.ordinal()
+                    .domain(data.map(function(d) {
+                        // console.log(d.x, d.y);
+                        return d.x;
+                    }))
+                    .rangeRoundBands([0, 500]);
+
+                var yScale = d3.scale.linear()
+                    .domain([0, d3.max(data, function(d){
+                        return d.y;
+                    })])
+                    .range([400 - padding.top - padding.bottom, 0]);
+
+                var xAxis = d3.svg.axis()
+                    .scale(xScale)
+                    .orient("bottom");
+
+                var yAxis = d3.svg.axis()
+                    .scale(yScale)
+                    .orient("left");
+
+                var rects = main.selectAll(".rect1")
+                    .data(data)
+                    .enter()
+                    .append("rect")
+                    .attr("class", "rect1")
+                    .attr("transform", "translate("+5+","+0+")")
+                    .attr("x", function(d){
+                        return xScale(d.x);
+                    })
+                    .attr("fill","teal")
+                    .attr("width", xScale.rangeBand()-10)
+                    .attr("height", function(d) { return 0; })
+                    .attr("y", function(d) { return 0; })
+
+                main.selectAll(".rect1")
+                    .transition()
+                    .duration(800)
+                    .attr("y", function(d){
+                        return yScale(d.y);
+                    })
+                    // .attr("fill", "#6698cb")
+                    .attr("height", function(d){
+                        return 400 - yScale(d.y) - padding.top - padding.bottom;
+                    })
+                    .delay(function(d,i){
+                        return(i*100)
+                    })
+
+                main.selectAll(".rect1").on('click', function(d,i){
+                    var rect = d3.select(this)
+                        .transition()
+                        .delay(0)
+                        .duration(0)
+                        .attr("opacity",0.6)
+
+                    console.log(i);
+                    AgeRange = i;
+                    ReturnRequestData();
+                    // if(AgeFlag){
+                    //     AgeRange = i
+                    //     ReturnRequestData();
+                    //     AgeFlag = !AgeFlag;
+                    // }else{
+                    //     AgeRange = -1
+                    //     ReturnRequestData();
+                    //     AgeFlag = !AgeFlag;
+                    // }
+                });
+
+                main.selectAll(".rect1").on("mouseover", function(d,i){
+                    var rect = d3.select(this)
+                        .transition()
+                        .delay(100)
+                        .duration(150)
+                        .attr("fill","#FFD700")
+                        .attr("opacity",1.0)
+                        .attr("y", function(d){
+                            return yScale(d.y)-10;
+                        })
+                        .attr("x", function(d){
+                            return xScale(d.x)-4;
+                        })
+                        .attr("width", xScale.rangeBand()-2)
+                        .attr("height", function(d){
+                            return 400 - yScale(d.y) - padding.top - padding.bottom + 10;
+                        });
+
+                    main.select("g")
+                        .append("text")
+                        .text(d.y)
+                        .attr("id","text_of_bars_1")
+
+                        .attr("fill","white")
+                        .attr("x", xScale(d.x))
+                        .attr("y", function(){
+                            return - (400 - yScale(d.y) - padding.top - padding.bottom) -15 ;
+                        })
+                        .attr("dx", 35)
+                        .attr("dy", 0)
+                        .attr("text-anchor", "middle")
+                        .transition()
+                        .delay(100)
+                        .duration(150)
+                })
+
+                main.selectAll(".rect1").on("mouseout", function(d,i){
+                    var rect = d3.select(this)
+                        .transition()
+                        .delay(100)
+                        .duration(150)
+                        .attr("fill","teal")
+                        .attr("opacity",1)
+                        .attr("x", function(d){
+                            return xScale(d.x);
+                        })
+                        .attr("y", function(d){
+                            return yScale(d.y);
+                        })
+                        .attr("width", xScale.rangeBand()-10)
+                        .attr("height", function(d){
+                            return 400 - yScale(d.y) - padding.top - padding.bottom;
+                        })
+
+                    main.selectAll("#text_of_bars_1").remove()
+                         .transition()
+                         .delay(300)
+                         .duration(150)
+                })
+
+                var line = d3.svg.line()
+                    .x(function(d) {
+                        return xScale(d.x)
+                    })
+                    .y(function(d) {
+                        return yScale(d.y)
+                    })
+                    // 选择线条的类型
+                    .interpolate('linear')
+
+                main.append('path')
+                    .attr('class', 'line')
+                    .attr('transform', 'translate (35,0)')
+                    .attr('d', line(data))
+                    .attr('stroke','#191970')
+                    .attr('fill','none')
+
+                main.selectAll('circle')
+                    .data(data)
+                    .enter()
+                    .append('circle')
+                    .attr("transform", 'translate(35,0)')
+                    .attr('cx', function(d) {
+                        return xScale(d.x);
+                    })
+                    .attr('cy', function(d) {
+                        return yScale(d.y);
+                    })
+                    .attr('r', function(d,i){
+                        return 4;
+                    })
+                    .attr('fill', function(d, i) {
+                        return color_roll(2);
+                    })
+
+                main.append("g")
+                    .attr("class", "axis")
+                    .attr("transform", "translate(0," + (400-padding.left-padding.right) + ")")
+                    .call(xAxis)
+                    .append("text")
+                    .attr("transform", "translate(" + 230 + "," + padding.bottom + ")")
+                    .style("text-anchor", "middle")
+                    .attr("fill","white")
+                    .attr("font-size", "12px")
+                    .text(xLabel);
+
+                main.append("g")
+                    .attr("class", "axis")
+                    .call(yAxis)
+                    .append("text")
+                    .attr("transform", "rotate(0)")
+                    .attr("x", 75)
+                    .attr("y", -20)
+                    .attr("dy", ".71em")
+                    .style("text-anchor", "end")
+                    .attr("fill","white")
+                    .attr("font-size", "12px")
+                    .text(yLabel);
+            }
+
+            function verticalBarChart(id, data, xLabel, yLabel) {
+
+                var main = d3.select("."+id).append("g")
+                    .attr('transform', "translate(" + (padding.left + 20)  +',' + padding.top + ')');
+
+                var xScale = d3.scale.ordinal()
+                    .domain(data.map(function(d) {
+                        // console.log(d.x, d.y);
+                        return d.x;
+                    }))
+                    .rangeRoundBands([0, 500]);
+
+                var yScale = d3.scale.linear()
+                    .domain([0, d3.max(data, function(d){
+                        return d.y;
+                    })])
+                    .range([0, 500 - padding.top - padding.bottom]);
+
+                var xAxis = d3.svg.axis()
+                    .scale(xScale)
+                    .orient("left");
+
+                var yAxis = d3.svg.axis()
+                    .scale(yScale)
+                    .orient("bottom")
+
+                rectHeight = 60;
+                var rects = main.selectAll(".rect2")
+                    .data(data)
+                    .enter()
+                    .append("rect")
+                    .attr("fill",function (d) {
+                        return "#30475E";
+                    })
+                    .attr("opacity", function (d,i){
+                        return (1.0- i*0.1);
+                    })
+                    .attr("class", "rect2")
+                    .attr("transform", "translate("+-5+","+15+")")
+                    .attr("x",0)
+                    .transition()
+                    .delay(function (d, i){
+                        return i*150;
+                    })
+                    .attr("y", function(d){
+                        return xScale(d.x);
+                    })
+                    .attr("width", function(d){
+                        return yScale(d.y);
+                    })
+                    .attr("height",rectHeight-5)
+
+                main.selectAll(".rect2").on('click', function(d,i){
+                    var rect = d3.select(this)
+                        .transition()
+                        .delay(0)
+                        .duration(0)
+                        .attr("opacity",0.6)
+
+                    SalaryRange = i;
+                    ReturnRequestData();
+                     // if(SalaryFlag){
+                     //    SalaryRange = i;
+                     //    ReturnRequestData();
+                     //    SalaryFlag = !SalaryFlag;
+                     // }else{
+                     //    SalaryRange = -1;
+                     //    ReturnRequestData();
+                     //    SalaryFlag = !SalaryFlag;
+                     // }
+                })
+
+                main.selectAll(".rect2").on("mouseover", function(d,i){
+                    var rect = d3.select(this)
+                        .transition()
+                        .delay(100)
+                        .duration(150)
+                        .attr("fill","#fe6673")
+                        .attr("x",0)
+                        .attr("y", function(d){
+                            return xScale(d.x);
+                        })
+                        .attr("width", function(d){
+                            return yScale(d.y)+10;
+                        })
+                        .attr("height",rectHeight-5)
+
+                    main.select("g")
+                        .append("text")
+                        .text(d.y)
+                        .attr("id","text_of_bars_2")
+                        .attr("fill","black")
+                        .attr("x", yScale(d.y))
+                        .attr("y", xScale(d.x))
+                        .attr("dx",20)
+                        .attr("dy",40)
+                        .attr("text-anchor", "middle")
+                        .transition()
+                        .delay(100)
+                        .duration(150)
+                })
+
+                 main.selectAll(".rect2").on("mouseout",function(d,i) {
+                     var rect = d3.select(this)
+                         .transition()
+                         .delay(300)
+                         .duration(150)
+                         .attr("opacity",1.0)
+                         .attr("fill",function () {
+                             return "#30475E";
+                         })
+                         .attr("opacity", function (){
+                             return (1.0- i*0.1);
+                         })
+                         .attr("x",0)
+                         .attr("y", function(d){
+                              return xScale(d.x);
+                         })
+                         .attr("width", function(d){
+                              return yScale(d.y);
+                         })
+                         .attr("height",rectHeight-5)
+
+                     main.selectAll("#text_of_bars_2").remove()
+                         .transition()
+                         .delay(300)
+                         .duration(150)
+                 })
+
+                main.append("g")
+                    .attr("class", "axis1")
+                    .attr("transform", "translate(-5,0)")
+                    .call(xAxis)
+                    .append("text")
+                    .attr("transform", "translate(" + 10+ "," + -10 + ")")
+                    .style("text-anchor", "middle")
+                    .attr("font-size", "12px")
+                    .text(xLabel);
+
+                main.append("g")
+                    .attr("class", "axis1")
+                    .call(yAxis)
+                    .attr("transform", "translate(-5,500)")
+                    .append("text")
+                    .attr("x", 25)
+                    .attr("y", 10)
+                    .attr("dy", ".71em")
+                    .style("text-anchor", "end")
+                    .attr("font-size", "12px")
+                    .attr("transform", "translate(240,20)")
+                    .text(yLabel);
+            }
+
+            console.log(window.location);
+
+       </script>
+
+    </body>
+</html>
